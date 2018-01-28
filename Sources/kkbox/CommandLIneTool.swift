@@ -20,6 +20,18 @@ private class Renderer {
 		self.writeMessage(error.localizedDescription, to: .error)
 	}
 
+
+	static func render(paging: KKPagingInfo) {
+		let message = "------------------------------------------------------------\n" +
+		"offset:\(paging.offset) limit:\(paging.limit) previous:\(String(describing: paging.previous)) next:\(String(describing: paging.next))"
+		self.writeMessage(message)
+	}
+
+	static func render(summary: KKSummary) {
+		let message = "total: \(summary.total)"
+		self.writeMessage(message)
+	}
+
 	static func render(playlistList: KKPlaylistList) {
 		let message = "PLAYLIST ID".padding(toLength: 18, withPad: " ", startingAt: 0) + "\t" +
 			"UPDATE AT".padding(toLength: 25, withPad: " ", startingAt: 0) + "\t" +
@@ -31,6 +43,41 @@ private class Renderer {
 				playlist.title.padding(toLength: 30, withPad: " ", startingAt: 0)
 			writeMessage(message)
 		}
+		self.render(paging: playlistList.paging)
+		self.render(summary: playlistList.summary)
+	}
+
+	static func render(track: KKTrackInfo) {
+		let message = """
+Track ID	\(track.ID)
+Track Name	\(track.name)
+URL			\(track.url?.absoluteString ?? "N/A")
+Durtation	\(track.duration)
+Album ID	\(track.album?.ID ?? "N/A")
+Album Name	\(track.album?.name ?? "N/A")
+Album ID	\(track.album?.ID ?? "N/A")
+Artist ID	\(track.album?.artist?.ID ?? "N/A")
+Artist Name	\(track.album?.artist?.name ?? "N/A")
+Order Index	\(track.trackOrderInAlbum)
+"""
+		self.writeMessage(message)
+	}
+
+	static func renderHelp() {
+		let help = """
+Usage:
+
+	$ kkbox COMMAND
+
+	A commandline tool to access KKBOX's Open API.
+
+Commands:
+
+	featured_playlists	Fetch features playlists.
+	track (TRACK_ID)	Fetch a track.
+	version			Print version of the tool.
+"""
+		writeMessage(help)
 	}
 }
 
@@ -71,10 +118,36 @@ private class CommandLineToolFetcher {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
+
+	func fetch(track ID: String) {
+		var runloopRunning = true
+		let task = try? API.fetch(track: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let track):
+				Renderer.render(track: track)
+				break
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
 }
 
 enum Commands: String {
 	case featuredPlaylists = "featured_playlists"
+	case track = "track"
+	case version = "version"
+
+	var requireAccessToken: Bool {
+		if self == .version {
+			return false
+		}
+		return true
+	}
 }
 
 public final class CommandLineTool {
@@ -83,8 +156,36 @@ public final class CommandLineTool {
 		self.arguments = arguments
 	}
 	public func run() throws {
-		if CommandLineToolFetcher.shared.fetchToken() {
+		if self.arguments.count <= 1 {
+			Renderer.renderHelp()
+			return
+		}
+
+		guard let command = Commands(rawValue: self.arguments[1]) else {
+			Renderer.renderHelp()
+			return
+		}
+
+		if command.requireAccessToken {
+			if CommandLineToolFetcher.shared.fetchToken() == false {
+				Renderer.writeMessage("Failed to fetch an access token.", to: .error)
+				return
+			}
+		}
+
+		switch command {
+		case .featuredPlaylists:
 			CommandLineToolFetcher.shared.fetchFeaturedPlaylist()
+		case .track:
+			if self.arguments.count <= 2 {
+				Renderer.writeMessage("No track ID specified.", to: .error)
+			} else {
+
+			}
+		case .version:
+			Renderer.writeMessage("kkbox 0.0.1")
+		default:
+			break
 		}
 	}
 }
