@@ -66,6 +66,16 @@ Order Index	\(track.trackOrderInAlbum)
 		self.writeMessage(message)
 	}
 
+	static func render(tracks:KKTrackList) {
+		self.writeMessage("\n")
+		for track in tracks.tracks {
+			self.render(track: track)
+			self.writeMessage("\n")
+		}
+		self.render(paging: tracks.paging)
+		self.render(summary: tracks.summary)
+	}
+
 	static func render(album: KKAlbumInfo) {
 		let message = """
 Album ID	\(album.ID)

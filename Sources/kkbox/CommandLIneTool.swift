@@ -58,12 +58,32 @@ private class CommandLineToolFetcher {
 
 	func fetch(album ID: String) {
 		var runloopRunning = true
-		let task = try? API.fetch(album: ID) { result in
+		var hasError = false
+		var task = try? API.fetch(album: ID) { result in
 			switch result {
 			case .error(let error):
 				Renderer.render(error: error)
+				hasError = true
 			case .success(let track):
 				Renderer.render(album: track)
+				break
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+		if hasError {
+			return
+		}
+		runloopRunning = true
+		task = try? API.fetch(tracksInAlbum: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+				hasError = true
+			case .success(let tracks):
+				Renderer.render(tracks: tracks)
 				break
 			}
 			runloopRunning = false
