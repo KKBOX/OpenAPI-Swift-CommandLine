@@ -84,6 +84,16 @@ Artist Images	\(String(describing: album.artist?.images))
 		self.writeMessage(message)
 	}
 
+	static func render(albums: KKAlbumList) {
+		self.writeMessage("\n")
+		for album in albums.albums {
+			self.render(album: album)
+			self.writeMessage("\n")
+		}
+		self.render(paging: albums.paging)
+		self.render(summary: albums.summary)
+	}
+
 	static func render(artist: KKArtistInfo) {
 		let message = """
 Artist ID	\(artist.ID)
@@ -116,12 +126,13 @@ Usage:
 
 Commands:
 
-	featured_playlists	Fetch features playlists.
-	track (TRACK_ID)	Fetch a track.
-	album (ALBUM_ID)	Fetch an album.
-	artist (ARTIST_ID)	Fetch an artist.
-	playlist (PLST_ID)	Fetch a playlist.
-	version			Print version of the tool.
+	featured_playlists		Fetch features playlists.
+	track (TRACK_ID)		Fetch a track.
+	album (ALBUM_ID)		Fetch an album.
+	artist (ARTIST_ID)		Fetch an artist.
+	artist_albums (ARTIST_ID)	Fetch albums of an artist.
+	playlist (PLAYLSIT_ID)		Fetch a playlist.
+	version				Print version of the tool.
 """
 		writeMessage(help)
 	}

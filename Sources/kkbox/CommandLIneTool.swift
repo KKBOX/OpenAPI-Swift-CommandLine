@@ -106,6 +106,22 @@ private class CommandLineToolFetcher {
 		}
 	}
 
+	func fetch(artistAlbum ID: String) {
+		var runloopRunning = true
+		let task = try? API.fetch(albumsBelongToArtist: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let albums):
+				Renderer.render(albums: albums)
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
 	func fetch(playlist ID: String) {
 		var runloopRunning = true
 		var hasError = false
@@ -146,6 +162,7 @@ enum Commands: String {
 	case track = "track"
 	case album = "album"
 	case artist = "artist"
+	case artistAlbums = "artist_albums"
 	case playlist = "playlist"
 	case version = "version"
 
@@ -203,6 +220,12 @@ public final class CommandLineTool {
 			} else {
 				CommandLineToolFetcher.shared.fetch(artist: self.arguments[2])
 			}
+		case .artistAlbums:
+			if self.arguments.count <= 2 {
+				Renderer.writeMessage("No artist ID specified.", to: .error)
+			} else {
+				CommandLineToolFetcher.shared.fetch(artistAlbum: self.arguments[2])
+			}
 		case .playlist:
 			if self.arguments.count <= 2 {
 				Renderer.writeMessage("No playlist ID specified.", to: .error)
@@ -211,8 +234,6 @@ public final class CommandLineTool {
 			}
 		case .version:
 			Renderer.writeMessage("kkbox 0.0.1")
-		default:
-			break
 		}
 	}
 }
