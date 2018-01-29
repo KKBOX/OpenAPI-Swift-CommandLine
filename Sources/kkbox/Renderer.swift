@@ -20,10 +20,9 @@ internal class Renderer {
 		self.writeMessage(error.localizedDescription, to: .error)
 	}
 
-
 	static func render(paging: KKPagingInfo) {
 		let message = "------------------------------------------------------------\n" +
-		"offset:\(paging.offset) limit:\(paging.limit) previous:\(String(describing: paging.previous)) next:\(String(describing: paging.next))"
+				"offset:\(paging.offset) limit:\(paging.limit) previous:\(String(describing: paging.previous)) next:\(String(describing: paging.next))"
 		self.writeMessage(message)
 	}
 
@@ -33,15 +32,9 @@ internal class Renderer {
 	}
 
 	static func render(playlistList: KKPlaylistList) {
-		let message = "PLAYLIST ID".padding(toLength: 18, withPad: " ", startingAt: 0) + "\t" +
-			"UPDATE AT".padding(toLength: 25, withPad: " ", startingAt: 0) + "\t" +
-			"PLAYLIST NAME".padding(toLength: 30, withPad: " ", startingAt: 0)
-		writeMessage(message)
 		for playlist in playlistList.playlists {
-			let message = playlist.ID.padding(toLength: 18, withPad: " ", startingAt: 0) + "\t" +
-				"\(playlist.lastUpdateDate)".padding(toLength: 25, withPad: " ", startingAt: 0) + "\t" +
-				playlist.title.padding(toLength: 30, withPad: " ", startingAt: 0)
-			writeMessage(message)
+			self.render(playlist: playlist)
+			writeMessage("")
 		}
 		self.render(paging: playlistList.paging)
 		self.render(summary: playlistList.summary)
@@ -66,7 +59,7 @@ Order Index	\(track.trackOrderInAlbum)
 		self.writeMessage(message)
 	}
 
-	static func render(tracks:KKTrackList) {
+	static func render(tracks: KKTrackList) {
 		self.writeMessage("\n")
 		for track in tracks.tracks {
 			self.render(track: track)
@@ -91,6 +84,28 @@ Artist Images	\(String(describing: album.artist?.images))
 		self.writeMessage(message)
 	}
 
+	static func render(artist: KKArtistInfo) {
+		let message = """
+Artist ID	\(artist.ID)
+Artist Name	\(artist.name)
+Artist URL	\(artist.url?.absoluteString ?? "N/A")
+Artist Images	\(String(describing: artist.images))
+"""
+		self.writeMessage(message)
+	}
+
+	static func render(playlist: KKPlaylistInfo) {
+		let message = """
+Playlist ID	\(playlist.ID)
+Playlist Name	\(playlist.title)
+Playlist URL	\(playlist.url?.absoluteString ?? "N/A")
+Playlist Images	\(String(describing: playlist.images))
+Updated at	\(playlist.lastUpdateDate)
+Curator		\(playlist.owner.ID) \(playlist.owner.name)
+"""
+		self.writeMessage(message)
+	}
+
 	static func renderHelp() {
 		let help = """
 Usage:
@@ -104,6 +119,8 @@ Commands:
 	featured_playlists	Fetch features playlists.
 	track (TRACK_ID)	Fetch a track.
 	album (ALBUM_ID)	Fetch an album.
+	artist (ARTIST_ID)	Fetch an artist.
+	playlist (PLST_ID)	Fetch a playlist.
 	version			Print version of the tool.
 """
 		writeMessage(help)

@@ -47,7 +47,6 @@ private class CommandLineToolFetcher {
 				Renderer.render(error: error)
 			case .success(let track):
 				Renderer.render(track: track)
-				break
 			}
 			runloopRunning = false
 		}
@@ -64,9 +63,8 @@ private class CommandLineToolFetcher {
 			case .error(let error):
 				Renderer.render(error: error)
 				hasError = true
-			case .success(let track):
-				Renderer.render(album: track)
-				break
+			case .success(let album):
+				Renderer.render(album: album)
 			}
 			runloopRunning = false
 		}
@@ -84,7 +82,6 @@ private class CommandLineToolFetcher {
 				hasError = true
 			case .success(let tracks):
 				Renderer.render(tracks: tracks)
-				break
 			}
 			runloopRunning = false
 		}
@@ -93,12 +90,63 @@ private class CommandLineToolFetcher {
 		}
 	}
 
+	func fetch(artist ID: String) {
+		var runloopRunning = true
+		let task = try? API.fetch(artist: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let artist):
+				Renderer.render(artist: artist)
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
+	func fetch(playlist ID: String) {
+		var runloopRunning = true
+		var hasError = false
+		var task = try? API.fetch(playlist: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+				hasError = true
+			case .success(let playlist):
+				Renderer.render(playlist: playlist)
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+		if hasError {
+			return
+		}
+		runloopRunning = true
+		task = try? API.fetch(tracksInPlaylist: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let tracks):
+				Renderer.render(tracks: tracks)
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
 }
 
 enum Commands: String {
 	case featuredPlaylists = "featured_playlists"
 	case track = "track"
 	case album = "album"
+	case artist = "artist"
+	case playlist = "playlist"
 	case version = "version"
 
 	var requireAccessToken: Bool {
@@ -111,9 +159,11 @@ enum Commands: String {
 
 public final class CommandLineTool {
 	private let arguments: [String]
+
 	public init(arguments: [String] = CommandLine.arguments) {
 		self.arguments = arguments
 	}
+
 	public func run() throws {
 		if self.arguments.count <= 1 {
 			Renderer.renderHelp()
@@ -146,6 +196,18 @@ public final class CommandLineTool {
 				Renderer.writeMessage("No album ID specified.", to: .error)
 			} else {
 				CommandLineToolFetcher.shared.fetch(album: self.arguments[2])
+			}
+		case .artist:
+			if self.arguments.count <= 2 {
+				Renderer.writeMessage("No artist ID specified.", to: .error)
+			} else {
+				CommandLineToolFetcher.shared.fetch(artist: self.arguments[2])
+			}
+		case .playlist:
+			if self.arguments.count <= 2 {
+				Renderer.writeMessage("No playlist ID specified.", to: .error)
+			} else {
+				CommandLineToolFetcher.shared.fetch(playlist: self.arguments[2])
 			}
 		case .version:
 			Renderer.writeMessage("kkbox 0.0.1")
