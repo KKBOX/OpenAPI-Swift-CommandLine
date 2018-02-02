@@ -24,6 +24,7 @@ private enum Commands: String {
 	case version = "version"
 	case help = "help"
 
+	/// If the command requries an access token.
 	var requireAccessToken: Bool {
 		switch self {
 		case .setClientID, .getClientID, .version, .help:
