@@ -1,7 +1,7 @@
-let tool = CommandLineTool()
+let tool = OpenAPICommandLineTool()
 
 do {
 	try tool.run()
 } catch {
-	print("Whoops! An error occurred: \(error)")
+	Renderer.write(message: error.localizedDescription, to: .error)
 }
