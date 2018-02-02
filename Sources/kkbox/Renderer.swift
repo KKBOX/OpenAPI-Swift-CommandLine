@@ -34,7 +34,7 @@ internal class Renderer {
 	static func render(playlistList: KKPlaylistList) {
 		for playlist in playlistList.playlists {
 			self.render(playlist: playlist)
-			writeMessage("")
+			self.writeMessage("")
 		}
 		self.render(paging: playlistList.paging)
 		self.render(summary: playlistList.summary)
@@ -116,6 +116,31 @@ Curator		\(playlist.owner.ID) \(playlist.owner.name)
 		self.writeMessage(message)
 	}
 
+	static func render(featuredPlaylistCategories :KKFeaturedPlaylistCategoryList) {
+		for category in featuredPlaylistCategories.categories {
+			let message = "\(category.ID) \(category.title)"
+			self.writeMessage(message)
+		}
+		self.render(paging: featuredPlaylistCategories.paging)
+		self.render(summary: featuredPlaylistCategories.summary)
+	}
+
+	static func render(featuredPlaylistCategory :KKFeaturedPlaylistCategory) {
+		self.writeMessage(featuredPlaylistCategory.ID)
+		self.writeMessage(featuredPlaylistCategory.title)
+		self.writeMessage("\(featuredPlaylistCategory.images)")
+
+		guard let playlists = featuredPlaylistCategory.playlists else {
+			return
+		}
+		for playlist in playlists.playlists {
+			self.render(playlist: playlist)
+			self.writeMessage("")
+		}
+		self.render(paging: playlists.paging)
+		self.render(summary: playlists.summary)
+	}
+
 	static func renderHelp() {
 		let help = """
 Usage:
@@ -126,13 +151,15 @@ Usage:
 
 Commands:
 
-	featured_playlists		Fetch features playlists.
-	track (TRACK_ID)		Fetch a track.
-	album (ALBUM_ID)		Fetch an album.
-	artist (ARTIST_ID)		Fetch an artist.
-	artist_albums (ARTIST_ID)	Fetch albums of an artist.
-	playlist (PLAYLSIT_ID)		Fetch a playlist.
-	version				Print version of the tool.
+	featured_playlists			Fetch features playlists.
+	featured_playlists_categories		Fetch features playlist categories.
+	featured_playlists_category (ID)	Fetch playlists  in a category.
+	track (TRACK_ID)			Fetch a track.
+	album (ALBUM_ID)			Fetch an album.
+	artist (ARTIST_ID)			Fetch an artist.
+	artist_albums (ARTIST_ID)		Fetch albums of an artist.
+	playlist (PLAYLSIT_ID)			Fetch a playlist.
+	version					Print version of the tool.
 """
 		writeMessage(help)
 	}

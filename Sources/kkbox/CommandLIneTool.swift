@@ -39,6 +39,38 @@ private class CommandLineToolFetcher {
 		}
 	}
 
+	func fetchFeaturedPlaylistCategories() {
+		var runloopRunning = true
+		let task = try? API.fetchFeaturedPlaylistCategories { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let categories):
+				Renderer.render(featuredPlaylistCategories: categories)
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
+	func fetchFeaturedPlaylist(inCategory category:String) {
+		var runloopRunning = true
+		let task = try? API.fetchFeaturedPlaylist(inCategory: category) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let category):
+				Renderer.render(featuredPlaylistCategory: category)
+			}
+			runloopRunning = false
+		}
+		if task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
 	func fetch(track ID: String) {
 		var runloopRunning = true
 		let task = try? API.fetch(track: ID) { result in
@@ -159,6 +191,8 @@ private class CommandLineToolFetcher {
 
 enum Commands: String {
 	case featuredPlaylists = "featured_playlists"
+	case featuredPlaylistCategories = "featured_playlists_categories"
+	case featuredPlaylistCategory = "featured_playlists_category"
 	case track = "track"
 	case album = "album"
 	case artist = "artist"
@@ -202,6 +236,14 @@ public final class CommandLineTool {
 		switch command {
 		case .featuredPlaylists:
 			CommandLineToolFetcher.shared.fetchFeaturedPlaylist()
+		case .featuredPlaylistCategories:
+			CommandLineToolFetcher.shared.fetchFeaturedPlaylistCategories()
+		case .featuredPlaylistCategory:
+			if self.arguments.count <= 2 {
+				Renderer.writeMessage("No category ID specified.", to: .error)
+			} else {
+				CommandLineToolFetcher.shared.fetchFeaturedPlaylist(inCategory: self.arguments[2])
+			}
 		case .track:
 			if self.arguments.count <= 2 {
 				Renderer.writeMessage("No track ID specified.", to: .error)
@@ -234,6 +276,10 @@ public final class CommandLineTool {
 			}
 		case .version:
 			Renderer.writeMessage("kkbox 0.0.1")
+		default:
+			break
+
 		}
+
 	}
 }
