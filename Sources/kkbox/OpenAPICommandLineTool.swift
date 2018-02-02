@@ -150,10 +150,10 @@ public final class OpenAPICommandLineTool {
 				fetcher.fetch(genreStation: $0)
 			}, error: .noStationID)
 		case .newReleaseCategories:
-			break
+			fetcher.fetchNewReleaseCategories()
 		case .newReleaseCategory:
-			try requestParameter(for: { _ in
-//				fetcher.fetch(genreStation: $0)
+			try requestParameter(for: {
+				fetcher.fetch(newReleaseCategory: $0)
 			}, error: .noCategoryID)
 		case .setClientID:
 			if self.arguments.count < 4 {

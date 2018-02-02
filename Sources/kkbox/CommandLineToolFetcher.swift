@@ -14,15 +14,15 @@ class CommandLineToolFetcher {
 	var runloopRunning = false
 	var hasError = false
 
-	func run(_ fetchCommand: @autoclosure () throws -> URLSessionTask?) {
-		func reset() {
-			runloopRunning = true
-			hasError = false
-		}
+	func reset() {
+		runloopRunning = true
+		hasError = false
+	}
 
+	func run(_ fetchCommand: @autoclosure () throws -> URLSessionTask?) {
 		reset()
 		let task = try? fetchCommand()
-		if task != nil && runloopRunning {
+		if task != nil && self.runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -43,7 +43,7 @@ class CommandLineToolFetcher {
 
 	func fetchToken() -> Bool {
 		run(try API?.fetchAccessTokenByClientCredential(callback: callback { _ in }))
-		return hasError
+		return !hasError
 	}
 
 	func fetchFeaturedPlaylist() {
@@ -101,4 +101,15 @@ class CommandLineToolFetcher {
 	func fetch(genreStation ID: String) {
 		run(try API?.fetch(tracksInGenreStation: ID, callback: callback { Renderer.render(station: $0) }))
 	}
+
+	func fetchNewReleaseCategories() {
+		run(try API?.fetchNewReleaseAlbumsCategories(callback: callback { Renderer.render(newReleaseAlbumsCategories: $0) }))
+	}
+
+	func fetch(newReleaseCategory ID: String) {
+		run(try API?.fetch(newReleasedAlbumsUnderCategory: ID, callback: callback { Renderer.render(newReleaseAlbumsCategory: $0) }))
+	}
+
+
+
 }

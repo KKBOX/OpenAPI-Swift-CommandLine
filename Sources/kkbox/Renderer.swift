@@ -173,6 +173,32 @@ Station Images	\(String(describing: station.images))
 		self.render(summary: tracks.summary)
 	}
 
+	static func render(newReleaseAlbumsCategories: KKNewReleasedAlbumsCategoryList) {
+		for category in newReleaseAlbumsCategories.categories {
+			let message = "\(category.ID) \(category.title)"
+			self.write(message: message)
+		}
+		self.render(paging: newReleaseAlbumsCategories.paging)
+		self.render(summary: newReleaseAlbumsCategories.summary)
+	}
+
+	static func render(newReleaseAlbumsCategory category: KKNewReleasedAlbumsCategory) {
+		let message = """
+Category ID		\(category.ID)
+Category Title	\(category.title)
+"""
+		self.write(message: message)
+		guard let albums = category.albums else {
+			return
+		}
+		for album in albums.albums {
+			self.render(album: album)
+			self.write(message: "")
+		}
+		self.render(paging: albums.paging)
+		self.render(summary: albums.summary)
+	}
+
 	static func renderHelp() {
 		let help = """
 Usage:
@@ -198,6 +224,8 @@ Commands:
     mood_station (STATION_ID)           Fetch a mood station.
     genre_stations                      Fetch genre stations.
     grene_station (STATION_ID)          Fetch a genre station.
+    new_release_categories              Fetch new released album categories.
+    new_release_category (ID)           Fetch albums in a new released album category
     version                             Print version of the tool.
     help                                This help.
 """
