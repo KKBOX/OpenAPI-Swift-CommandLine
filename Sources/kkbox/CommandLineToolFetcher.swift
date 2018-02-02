@@ -23,7 +23,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 		return hasAccessToken
@@ -56,7 +56,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -72,7 +72,23 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
+	func fetchCharts() {
+		var runloopRunning = true
+		let task = try? API?.fetchCharts { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let charts):
+				Renderer.render(playlistList: charts)
+			}
+			runloopRunning = false
+		}
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -88,7 +104,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -123,7 +139,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -139,7 +155,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -155,7 +171,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}
@@ -173,7 +189,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 		if hasError {
@@ -189,7 +205,7 @@ class CommandLineToolFetcher {
 			}
 			runloopRunning = false
 		}
-		if task != nil && runloopRunning {
+		while task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 	}

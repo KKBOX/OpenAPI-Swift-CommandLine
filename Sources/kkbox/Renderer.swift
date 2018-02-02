@@ -145,24 +145,25 @@ Curator		\(playlist.owner.ID) \(playlist.owner.name)
 		let help = """
 Usage:
 
-	$ kkbox COMMAND
+    $ kkbox COMMAND
 
-	A commandline tool to access KKBOX's Open API.
+    A commandline tool to access KKBOX's Open API.
 
 Commands:
 
-	set_client_id (ID) (SECRET)		Set client ID and secret.
-	get_client_id (ID) (SECRET)		Get client ID and secret.
-	featured_playlists			Fetch features playlists.
-	featured_playlists_categories		Fetch features playlist categories.
-	featured_playlists_category (ID)	Fetch playlists in a category.
-	track (TRACK_ID)			Fetch a track.
-	album (ALBUM_ID)			Fetch an album.
-	artist (ARTIST_ID)			Fetch an artist.
-	artist_albums (ARTIST_ID)		Fetch albums of an artist.
-	playlist (PLAYLSIT_ID)			Fetch a playlist.
-	version					Print version of the tool.
-	help					This help.
+    set_client_id (ID) (SECRET)         Set client ID and secret.
+    get_client_id (ID) (SECRET)         Get client ID and secret.
+    featured_playlists                  Fetch features playlists.
+    featured_playlists_categories       Fetch features playlist categories.
+    featured_playlists_category (ID)    Fetch playlists in a category.
+    charts                              Fetch charts.
+    track (TRACK_ID)                    Fetch a track.
+    album (ALBUM_ID)                    Fetch an album.
+    artist (ARTIST_ID)                  Fetch an artist.
+    artist_albums (ARTIST_ID)           Fetch albums of an artist.
+    playlist (PLAYLSIT_ID)              Fetch a playlist.
+    version                             Print version of the tool.
+    help                                This help.
 """
 		write(message: help)
 	}
