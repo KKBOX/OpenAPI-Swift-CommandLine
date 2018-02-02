@@ -60,10 +60,9 @@ Order Index	\(track.trackOrderInAlbum)
 	}
 
 	static func render(tracks: KKTrackList) {
-		self.write(message: "\n")
 		for track in tracks.tracks {
 			self.render(track: track)
-			self.write(message: "\n")
+			self.write(message: "")
 		}
 		self.render(paging: tracks.paging)
 		self.render(summary: tracks.summary)
@@ -85,10 +84,9 @@ Artist Images	\(String(describing: album.artist?.images))
 	}
 
 	static func render(albums: KKAlbumList) {
-		self.write(message: "\n")
 		for album in albums.albums {
 			self.render(album: album)
-			self.write(message: "\n")
+			self.write(message: "")
 		}
 		self.render(paging: albums.paging)
 		self.render(summary: albums.summary)
@@ -102,6 +100,15 @@ Artist URL	\(artist.url?.absoluteString ?? "N/A")
 Artist Images	\(String(describing: artist.images))
 """
 		self.write(message: message)
+	}
+
+	static func render(artists: KKArtistList) {
+		for artist in artists.artists {
+			self.render(artist: artist)
+			self.write(message: "")
+		}
+		self.render(paging: artists.paging)
+		self.render(summary: artists.summary)
 	}
 
 	static func render(playlist: KKPlaylistInfo) {
@@ -227,6 +234,10 @@ Commands:
     grene_station (STATION_ID)          Fetch a genre station.
     new_release_categories              Fetch new released album categories.
     new_release_category (ID)           Fetch albums in a new released album category
+    search_track (KEYWORD)              Search for tracks.
+    search_album (KEYWORD)              Search for albums.
+    search_artist (KEYWORD)             Search for artists.
+    search_playlist (KEYWORD)           Search for playlists.
     version                             Print version of the tool.
     help                                This help.
 """

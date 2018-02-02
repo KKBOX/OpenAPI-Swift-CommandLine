@@ -22,6 +22,10 @@ private enum Commands: String {
 	case genreStation = "genre_station"
 	case newReleaseCategories = "new_release_categories"
 	case newReleaseCategory = "new_release_category"
+	case searchTrack = "search_track"
+	case searchAlbum = "search_album"
+	case searchArtist = "search_artist"
+	case searchPlaylist = "search_playlist"
 	case version = "version"
 	case help = "help"
 
@@ -46,6 +50,7 @@ enum OpenAPICommandLineError: Error {
 	case noAlbumID
 	case noPlaylistID
 	case noStationID
+	case noKeyword
 
 	var localizedDescription: String {
 		switch self {
@@ -67,6 +72,8 @@ enum OpenAPICommandLineError: Error {
 			return "No playlist ID specified."
 		case .noStationID:
 			return "No station ID specified."
+		case .noKeyword:
+			return "No keyword specified."
 		}
 	}
 }
@@ -100,11 +107,11 @@ public final class OpenAPICommandLineTool {
 			}
 		}
 
-		func requestParameter(for operation: (String) -> (), error: OpenAPICommandLineError) throws {
+		func requestParameter(for commandOperation: (String) -> (), error: OpenAPICommandLineError) throws {
 			if self.arguments.count <= 2 {
 				throw error
 			} else {
-				operation(self.arguments[2])
+				commandOperation(self.arguments[2])
 			}
 		}
 
@@ -167,6 +174,22 @@ public final class OpenAPICommandLineTool {
 			let clientSecret = self.arguments[3]
 			UserDefaults.standard.set(clientID, forKey: clientIDKey)
 			UserDefaults.standard.set(clientSecret, forKey: clientSecretKey)
+		case .searchTrack:
+			try requestParameter(for: {
+				fetcher.searchTrack(keyword: $0)
+			}, error: .noKeyword)
+		case .searchAlbum:
+			try requestParameter(for: {
+				fetcher.searchAlbum(keyword: $0)
+			}, error: .noKeyword)
+		case .searchArtist:
+			try requestParameter(for: {
+				fetcher.searchArtist(keyword: $0)
+			}, error: .noKeyword)
+		case .searchPlaylist:
+			try requestParameter(for: {
+				fetcher.searchPlaylist(keyword: $0)
+			}, error: .noKeyword)
 		case .getClientID:
 			guard let clientID = UserDefaults.standard.string(forKey: clientIDKey),
 			      let clientSecret = UserDefaults.standard.string(forKey: clientSecretKey) else {
@@ -178,8 +201,6 @@ public final class OpenAPICommandLineTool {
 			Renderer.write(message: "kkbox 0.0.1")
 		case .help:
 			Renderer.renderHelp()
-		default:
-			break
 		}
 	}
 }

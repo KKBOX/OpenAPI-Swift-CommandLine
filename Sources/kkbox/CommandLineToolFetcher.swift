@@ -114,5 +114,36 @@ class CommandLineToolFetcher {
 		run(try API?.fetchNewHitsPlaylists(callback: callback { Renderer.render(playlistList: $0) } ))
 	}
 
+	func searchTrack(keyword: String) {
+		run(try API?.search(with: keyword, types: .track, callback: callback {
+			if let tracks = $0.trackResults {
+				Renderer.render(tracks: tracks)
+			}
+		}))
+	}
+
+	func searchAlbum(keyword: String) {
+		run(try API?.search(with: keyword, types: .album, callback: callback {
+			if let albums = $0.albumResults {
+				Renderer.render(albums: albums)
+			}
+		}))
+	}
+
+	func searchArtist(keyword: String) {
+		run(try API?.search(with: keyword, types: .artist, callback: callback {
+			if let artists = $0.artistResults {
+				Renderer.render(artists: artists)
+			}
+		}))
+	}
+
+	func searchPlaylist(keyword: String) {
+		run(try API?.search(with: keyword, types: .playlist, callback: callback {
+			if let playlists = $0.playlistsResults {
+				Renderer.render(playlistList: playlists)
+			}
+		}))
+	}
 
 }
