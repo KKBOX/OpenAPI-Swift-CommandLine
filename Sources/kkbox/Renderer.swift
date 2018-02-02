@@ -141,6 +141,20 @@ Curator		\(playlist.owner.ID) \(playlist.owner.name)
 		self.render(summary: playlists.summary)
 	}
 
+	static func render(stations: KKRadioStationList) {
+		for station in stations.stations {
+			let message = """
+Station ID	\(station.ID)
+Station Name	\(station.name)
+Station Images	\(String(describing: station.images))
+"""
+			self.write(message: message)
+			self.write(message: "")
+		}
+		self.render(paging: stations.paging)
+		self.render(summary: stations.summary)
+	}
+
 	static func renderHelp() {
 		let help = """
 Usage:
@@ -162,6 +176,10 @@ Commands:
     artist (ARTIST_ID)                  Fetch an artist.
     artist_albums (ARTIST_ID)           Fetch albums of an artist.
     playlist (PLAYLSIT_ID)              Fetch a playlist.
+    mood_stations                       Fetch mood stations.
+    mood_station (STATION_ID)           Fetch a mood station.
+    genre_stations                      Fetch genre stations.
+    grene_station (STATION_ID)          Fetch a genre station.
     version                             Print version of the tool.
     help                                This help.
 """

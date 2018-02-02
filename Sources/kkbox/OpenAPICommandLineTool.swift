@@ -15,6 +15,10 @@ enum Commands: String {
 	case artist = "artist"
 	case artistAlbums = "artist_albums"
 	case playlist = "playlist"
+	case moodStations = "mood_stations"
+	case moodStation = "mood_station"
+	case genreStations = "genre_stations"
+	case genreStation = "genre_station"
 	case version = "version"
 	case help = "help"
 
@@ -128,6 +132,15 @@ public final class OpenAPICommandLineTool {
 			try requestParameter(for: {
 				fetcher.fetch(playlist: $0)
 			}, error: .noPlaylistID)
+		case .moodStations:
+			fetcher.fetchMoodStations()
+		case .moodStation:
+			break
+		case .genreStations:
+			fetcher.fetchGenreStations()
+		case .genreStation:
+			break
+
 		case .setClientID:
 			if self.arguments.count < 4 {
 				Renderer.write(message: "Please input your client ID and secret by: kkbox set_client_id <client_id> <secret>", to: .error)
@@ -148,6 +161,8 @@ public final class OpenAPICommandLineTool {
 			Renderer.write(message: "kkbox 0.0.1")
 		case .help:
 			Renderer.renderHelp()
+		default:
+			break
 		}
 	}
 }
