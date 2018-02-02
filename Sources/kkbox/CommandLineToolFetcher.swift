@@ -22,8 +22,8 @@ class CommandLineToolFetcher {
 	func run(_ fetchCommand: @autoclosure () throws -> URLSessionTask?) {
 		reset()
 		let task = try? fetchCommand()
-		if task != nil && self.runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		while task != nil && self.runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
 		}
 	}
 

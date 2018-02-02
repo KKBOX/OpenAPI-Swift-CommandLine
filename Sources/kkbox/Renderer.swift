@@ -42,19 +42,19 @@ internal class Renderer {
 
 	static func render(track: KKTrackInfo) {
 		let message = """
-Track ID	\(track.ID)
-Track Name	\(track.name)
-URL		\(track.url?.absoluteString ?? "N/A")
-Durtation	\(track.duration)
-Album ID	\(track.album?.ID ?? "N/A")
-Album Name	\(track.album?.name ?? "N/A")
-Album URL	\(track.album?.url?.absoluteString ?? "N/A")
-Album Images	\(String(describing: track.album?.images))
-Artist ID	\(track.album?.artist?.ID ?? "N/A")
-Artist Name	\(track.album?.artist?.name ?? "N/A")
-Artist URL	\(track.album?.artist?.url?.absoluteString ?? "N/A")
-Artist Images	\(String(describing: track.album?.artist?.images))
-Order Index	\(track.trackOrderInAlbum)
+ID             \(track.ID)
+Name           \(track.name)
+URL            \(track.url?.absoluteString ?? "N/A")
+Durtation      \(track.duration)
+Album_ID       \(track.album?.ID ?? "N/A")
+Album_Name     \(track.album?.name ?? "N/A")
+Album_URL      \(track.album?.url?.absoluteString ?? "N/A")
+Album_Images   \(String(describing: track.album?.images))
+Order_Index    \(track.trackOrderInAlbum)
+Artist_ID      \(track.album?.artist?.ID ?? "N/A")
+Artist_Name    \(track.album?.artist?.name ?? "N/A")
+Artist_URL     \(track.album?.artist?.url?.absoluteString ?? "N/A")
+Artist_Images  \(String(describing: track.album?.artist?.images))
 """
 		self.write(message: message)
 	}
@@ -70,15 +70,15 @@ Order Index	\(track.trackOrderInAlbum)
 
 	static func render(album: KKAlbumInfo) {
 		let message = """
-Album ID	\(album.ID)
-Album Name	\(album.name)
-Album URL	\(album.url?.absoluteString ?? "N/A")
-Album Images	\(album.images)
-Released At	\(album.releaseDate ?? "N/A ")
-Artist ID	\(album.artist?.ID ?? "N/A")
-Artist Name	\(album.artist?.name ?? "N/A")
-Artist URL	\(album.artist?.url?.absoluteString ?? "N/A")
-Artist Images	\(String(describing: album.artist?.images))
+Album_ID      \(album.ID)
+Album_Name    \(album.name)
+Album_URL     \(album.url?.absoluteString ?? "N/A")
+Album_Images  \(album.images)
+Released_At   \(album.releaseDate ?? "N/A ")
+Artist_ID     \(album.artist?.ID ?? "N/A")
+Artist_Name   \(album.artist?.name ?? "N/A")
+Artist_URL    \(album.artist?.url?.absoluteString ?? "N/A")
+Artist_Images \(String(describing: album.artist?.images))
 """
 		self.write(message: message)
 	}
@@ -94,10 +94,10 @@ Artist Images	\(String(describing: album.artist?.images))
 
 	static func render(artist: KKArtistInfo) {
 		let message = """
-Artist ID	\(artist.ID)
-Artist Name	\(artist.name)
-Artist URL	\(artist.url?.absoluteString ?? "N/A")
-Artist Images	\(String(describing: artist.images))
+ID      \(artist.ID)
+Name    \(artist.name)
+URL     \(artist.url?.absoluteString ?? "N/A")
+Images  \(String(describing: artist.images))
 """
 		self.write(message: message)
 	}
@@ -113,12 +113,12 @@ Artist Images	\(String(describing: artist.images))
 
 	static func render(playlist: KKPlaylistInfo) {
 		let message = """
-Playlist ID	\(playlist.ID)
-Playlist Name	\(playlist.title)
-Playlist URL	\(playlist.url?.absoluteString ?? "N/A")
-Playlist Images	\(String(describing: playlist.images))
-Updated at	\(playlist.lastUpdateDate)
-Curator		\(playlist.owner.ID) \(playlist.owner.name)
+ID      \(playlist.ID)
+Name    \(playlist.title)
+URL     \(playlist.url?.absoluteString ?? "N/A")
+Images  \(String(describing: playlist.images))
+Updated \(playlist.lastUpdateDate)
+Curator \(playlist.owner.ID) \(playlist.owner.name)
 """
 		self.write(message: message)
 	}
@@ -151,9 +151,9 @@ Curator		\(playlist.owner.ID) \(playlist.owner.name)
 	static func render(stations: KKRadioStationList) {
 		for station in stations.stations {
 			let message = """
-Station ID	\(station.ID)
-Station Name	\(station.name)
-Station Images	\(String(describing: station.images))
+ID      \(station.ID)
+Name    \(station.name)
+Images  \(String(describing: station.images))
 """
 			self.write(message: message)
 			self.write(message: "")
@@ -164,9 +164,9 @@ Station Images	\(String(describing: station.images))
 
 	static func render(station: KKRadioStation) {
 		let message = """
-Station ID	\(station.ID)
-Station Name	\(station.name)
-Station Images	\(String(describing: station.images))
+ID      \(station.ID)
+Name    \(station.name)
+Images  \(String(describing: station.images))
 """
 		self.write(message: message)
 		guard let tracks = station.tracks else {
@@ -191,8 +191,8 @@ Station Images	\(String(describing: station.images))
 
 	static func render(newReleaseAlbumsCategory category: KKNewReleasedAlbumsCategory) {
 		let message = """
-Category ID		\(category.ID)
-Category Title	\(category.title)
+ID      \(category.ID)
+Title   \(category.title)
 """
 		self.write(message: message)
 		guard let albums = category.albums else {
