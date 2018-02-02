@@ -14,26 +14,13 @@ class CommandLineToolFetcher {
 	var runloopRunning = false
 	var hasError = false
 
-	func fetchToken() -> Bool {
-		var hasAccessToken = false
-		runloopRunning = true
-		let task = try? API?.fetchAccessTokenByClientCredential { result in
-			switch result {
-			case .error(_):
-				hasAccessToken = false
-			case .success(_):
-				hasAccessToken = true
-			}
-			self.runloopRunning = false
-		}
-		while task != nil && self.runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
-		return hasAccessToken
-	}
-
 	func run(_ fetchCommand: @autoclosure () throws -> URLSessionTask?) {
-		self.runloopRunning = true
+		func reset() {
+			runloopRunning = true
+			hasError = false
+		}
+
+		reset()
 		let task = try? fetchCommand()
 		if task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
@@ -52,6 +39,11 @@ class CommandLineToolFetcher {
 			}
 			self.runloopRunning = false
 		}
+	}
+
+	func fetchToken() -> Bool {
+		run(try API?.fetchAccessTokenByClientCredential(callback: callback { _ in }))
+		return hasError
 	}
 
 	func fetchFeaturedPlaylist() {
