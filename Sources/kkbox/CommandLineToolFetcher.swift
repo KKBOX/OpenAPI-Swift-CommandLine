@@ -11,9 +11,12 @@ class CommandLineToolFetcher {
 		return KKBOXOpenAPI(clientID: clientID, secret: clientSecret)
 	}()
 
+	var runloopRunning = false
+	var hasError = false
+
 	func fetchToken() -> Bool {
 		var hasAccessToken = false
-		var runloopRunning = true
+		runloopRunning = true
 		let task = try? API?.fetchAccessTokenByClientCredential { result in
 			switch result {
 			case .error(_):
@@ -21,257 +24,89 @@ class CommandLineToolFetcher {
 			case .success(_):
 				hasAccessToken = true
 			}
-			runloopRunning = false
+			self.runloopRunning = false
 		}
-		while task != nil && runloopRunning {
+		while task != nil && self.runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
 		return hasAccessToken
 	}
 
-	func fetchFeaturedPlaylist() {
-		var runloopRunning = true
-		let task = try? API?.fetchFeaturedPlaylists { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let playlistList):
-				Renderer.render(playlistList: playlistList)
-			}
-			runloopRunning = false
-		}
+	func run(_ fetchCommand: @autoclosure () throws -> URLSessionTask?) {
+		self.runloopRunning = true
+		let task = try? fetchCommand()
 		if task != nil && runloopRunning {
 			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
 		}
+	}
+
+	func callback<T>(successHandler: @escaping (T) -> ()) -> (KKAPIResult<T>) -> () {
+		return { result in
+			switch result {
+			case .error(let error):
+				self.hasError = true
+				Renderer.render(error: error)
+			case .success(let object):
+				self.hasError = false
+				successHandler(object)
+			}
+			self.runloopRunning = false
+		}
+	}
+
+	func fetchFeaturedPlaylist() {
+		run(try API?.fetchFeaturedPlaylists(callback: callback { Renderer.render(playlistList: $0) }))
 	}
 
 	func fetchFeaturedPlaylistCategories() {
-		var runloopRunning = true
-		let task = try? API?.fetchFeaturedPlaylistCategories { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let categories):
-				Renderer.render(featuredPlaylistCategories: categories)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetchFeaturedPlaylistCategories(callback: callback { Renderer.render(featuredPlaylistCategories: $0) }))
 	}
 
 	func fetchFeaturedPlaylist(inCategory category: String) {
-		var runloopRunning = true
-		let task = try? API?.fetchFeaturedPlaylist(inCategory: category) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let category):
-				Renderer.render(featuredPlaylistCategory: category)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetchFeaturedPlaylist(inCategory: category, callback: callback { Renderer.render(featuredPlaylistCategory: $0) }))
 	}
 
 	func fetchCharts() {
-		var runloopRunning = true
-		let task = try? API?.fetchCharts { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let charts):
-				Renderer.render(playlistList: charts)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetchCharts(callback: callback { Renderer.render(playlistList: $0) }))
 	}
 
 	func fetch(track ID: String) {
-		var runloopRunning = true
-		let task = try? API?.fetch(track: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let track):
-				Renderer.render(track: track)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(track: ID, callback: callback { Renderer.render(track: $0) }))
 	}
 
 	func fetch(album ID: String) {
-		var runloopRunning = true
-		var hasError = false
-		var task = try? API?.fetch(album: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-				hasError = true
-			case .success(let album):
-				Renderer.render(album: album)
-			}
-			runloopRunning = false
-		}
-		if task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
-		if hasError {
-			return
-		}
-		runloopRunning = true
-		task = try? API?.fetch(tracksInAlbum: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-				hasError = true
-			case .success(let tracks):
-				Renderer.render(tracks: tracks)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(album: ID, callback: callback { Renderer.render(album: $0) }))
+		if hasError { return }
+		run(try API?.fetch(tracksInAlbum: ID, callback: callback { Renderer.render(tracks: $0) }))
 	}
 
 	func fetch(artist ID: String) {
-		var runloopRunning = true
-		let task = try? API?.fetch(artist: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let artist):
-				Renderer.render(artist: artist)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(artist: ID, callback: callback { Renderer.render(artist: $0) }))
 	}
 
 	func fetch(artistAlbum ID: String) {
-		var runloopRunning = true
-		let task = try? API?.fetch(albumsBelongToArtist: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let albums):
-				Renderer.render(albums: albums)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(albumsBelongToArtist: ID, callback: callback { Renderer.render(albums: $0) }))
 	}
 
 	func fetch(playlist ID: String) {
-		var runloopRunning = true
-		var hasError = false
-		var task = try? API?.fetch(playlist: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-				hasError = true
-			case .success(let playlist):
-				Renderer.render(playlist: playlist)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
-		if hasError {
-			return
-		}
-		runloopRunning = true
-		task = try? API?.fetch(tracksInPlaylist: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let tracks):
-				Renderer.render(tracks: tracks)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(playlist: ID, callback: callback { Renderer.render(playlist: $0) }))
+		if hasError { return }
+		run(try API?.fetch(tracksInPlaylist: ID, callback: callback { Renderer.render(tracks: $0) }))
 	}
 
 	func fetchMoodStations() {
-		var runloopRunning = true
-		let task = try? API?.fetchMoodStations { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let stations):
-				Renderer.render(stations: stations)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetchMoodStations(callback: callback { Renderer.render(stations: $0) }))
 	}
 
 	func fetch(moodStation ID: String) {
-		var runloopRunning = true
-		let task = try? API?.fetch(tracksInMoodStation: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let station):
-				Renderer.render(station: station)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(tracksInMoodStation: ID, callback: callback { Renderer.render(station: $0) }))
 	}
 
 	func fetchGenreStations() {
-		var runloopRunning = true
-		let task = try? API?.fetchGenreStations { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let stations):
-				Renderer.render(stations: stations)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetchGenreStations(callback: callback { Renderer.render(stations: $0) }))
 	}
 
 	func fetch(genreStation ID: String) {
-		var runloopRunning = true
-		let task = try? API?.fetch(tracksInGenreStation: ID) { result in
-			switch result {
-			case .error(let error):
-				Renderer.render(error: error)
-			case .success(let station):
-				Renderer.render(station: station)
-			}
-			runloopRunning = false
-		}
-		while task != nil && runloopRunning {
-			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
-		}
+		run(try API?.fetch(tracksInGenreStation: ID, callback: callback { Renderer.render(station: $0) }))
 	}
-
 }

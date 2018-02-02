@@ -3,7 +3,7 @@ import Foundation
 let clientIDKey = "clientID"
 let clientSecretKey = "clientSecret"
 
-enum Commands: String {
+private enum Commands: String {
 	case setClientID = "set_client_id"
 	case getClientID = "get_client_id"
 	case featuredPlaylists = "featured_playlists"
@@ -19,6 +19,8 @@ enum Commands: String {
 	case moodStation = "mood_station"
 	case genreStations = "genre_stations"
 	case genreStation = "genre_station"
+	case newReleaseCategories = "new_release_categories"
+	case newReleaseCategory = "new_release_category"
 	case version = "version"
 	case help = "help"
 
@@ -147,6 +149,12 @@ public final class OpenAPICommandLineTool {
 			try requestParameter(for: {
 				fetcher.fetch(genreStation: $0)
 			}, error: .noStationID)
+		case .newReleaseCategories:
+			break
+		case .newReleaseCategory:
+			try requestParameter(for: { _ in
+//				fetcher.fetch(genreStation: $0)
+			}, error: .noCategoryID)
 		case .setClientID:
 			if self.arguments.count < 4 {
 				throw OpenAPICommandLineError.clientIDFormatInvalid
