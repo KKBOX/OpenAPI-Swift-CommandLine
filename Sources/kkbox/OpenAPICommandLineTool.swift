@@ -41,6 +41,7 @@ enum OpenAPICommandLineError: Error {
 	case noArtistID
 	case noAlbumID
 	case noPlaylistID
+	case noStationID
 
 	var localizedDescription: String {
 		switch self {
@@ -60,6 +61,8 @@ enum OpenAPICommandLineError: Error {
 			return "No album ID specified."
 		case .noPlaylistID:
 			return "No playlist ID specified."
+		case .noStationID:
+			return "No station ID specified."
 		}
 	}
 }
@@ -135,15 +138,17 @@ public final class OpenAPICommandLineTool {
 		case .moodStations:
 			fetcher.fetchMoodStations()
 		case .moodStation:
-			break
+			try requestParameter(for: {
+				fetcher.fetch(moodStation: $0)
+			}, error: .noStationID)
 		case .genreStations:
 			fetcher.fetchGenreStations()
 		case .genreStation:
-			break
-
+			try requestParameter(for: {
+				fetcher.fetch(genreStation: $0)
+			}, error: .noStationID)
 		case .setClientID:
 			if self.arguments.count < 4 {
-				Renderer.write(message: "Please input your client ID and secret by: kkbox set_client_id <client_id> <secret>", to: .error)
 				throw OpenAPICommandLineError.clientIDFormatInvalid
 			}
 			let clientID = self.arguments[2]

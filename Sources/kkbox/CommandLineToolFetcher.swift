@@ -212,7 +212,7 @@ class CommandLineToolFetcher {
 
 	func fetchMoodStations() {
 		var runloopRunning = true
-		let task = try? API?.fetchMoodStations{ result in
+		let task = try? API?.fetchMoodStations { result in
 			switch result {
 			case .error(let error):
 				Renderer.render(error: error)
@@ -226,14 +226,46 @@ class CommandLineToolFetcher {
 		}
 	}
 
+	func fetch(moodStation ID: String) {
+		var runloopRunning = true
+		let task = try? API?.fetch(tracksInMoodStation: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let station):
+				Renderer.render(station: station)
+			}
+			runloopRunning = false
+		}
+		while task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
 	func fetchGenreStations() {
 		var runloopRunning = true
-		let task = try? API?.fetchGenreStations{ result in
+		let task = try? API?.fetchGenreStations { result in
 			switch result {
 			case .error(let error):
 				Renderer.render(error: error)
 			case .success(let stations):
 				Renderer.render(stations: stations)
+			}
+			runloopRunning = false
+		}
+		while task != nil && runloopRunning {
+			RunLoop.current.run(until: Date(timeIntervalSinceNow: 1))
+		}
+	}
+
+	func fetch(genreStation ID: String) {
+		var runloopRunning = true
+		let task = try? API?.fetch(tracksInGenreStation: ID) { result in
+			switch result {
+			case .error(let error):
+				Renderer.render(error: error)
+			case .success(let station):
+				Renderer.render(station: station)
 			}
 			runloopRunning = false
 		}

@@ -155,6 +155,24 @@ Station Images	\(String(describing: station.images))
 		self.render(summary: stations.summary)
 	}
 
+	static func render(station: KKRadioStation) {
+		let message = """
+Station ID	\(station.ID)
+Station Name	\(station.name)
+Station Images	\(String(describing: station.images))
+"""
+		self.write(message: message)
+		guard let tracks = station.tracks else {
+			return
+		}
+		for track in tracks.tracks {
+			self.render(track: track)
+			self.write(message: "")
+		}
+		self.render(paging: tracks.paging)
+		self.render(summary: tracks.summary)
+	}
+
 	static func renderHelp() {
 		let help = """
 Usage:
