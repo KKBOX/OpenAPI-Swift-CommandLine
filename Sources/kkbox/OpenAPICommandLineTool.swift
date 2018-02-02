@@ -9,6 +9,7 @@ private enum Commands: String {
 	case featuredPlaylists = "featured_playlists"
 	case featuredPlaylistCategories = "featured_playlists_categories"
 	case featuredPlaylistCategory = "featured_playlists_category"
+	case newHitsPlaylists = "new_hits_playlists"
 	case charts = "charts"
 	case track = "track"
 	case album = "album"
@@ -116,6 +117,8 @@ public final class OpenAPICommandLineTool {
 			try requestParameter(for: {
 				fetcher.fetchFeaturedPlaylist(inCategory: $0)
 			}, error: .noCategoryID)
+		case .newHitsPlaylists:
+			fetcher.fetchNewHitsPlaylists()
 		case .charts:
 			fetcher.fetchCharts()
 		case .track:

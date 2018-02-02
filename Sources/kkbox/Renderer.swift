@@ -214,6 +214,7 @@ Commands:
     featured_playlists                  Fetch features playlists.
     featured_playlists_categories       Fetch features playlist categories.
     featured_playlists_category (ID)    Fetch playlists in a category.
+    new_hits_playlists                  Fetch new hits playlists.
     charts                              Fetch charts.
     track (TRACK_ID)                    Fetch a track.
     album (ALBUM_ID)                    Fetch an album.

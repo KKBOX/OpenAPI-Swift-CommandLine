@@ -110,6 +110,9 @@ class CommandLineToolFetcher {
 		run(try API?.fetch(newReleasedAlbumsUnderCategory: ID, callback: callback { Renderer.render(newReleaseAlbumsCategory: $0) }))
 	}
 
+	func fetchNewHitsPlaylists() {
+		run(try API?.fetchNewHitsPlaylists(callback: callback { Renderer.render(playlistList: $0) } ))
+	}
 
 
 }
