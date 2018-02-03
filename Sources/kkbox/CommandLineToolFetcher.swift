@@ -69,6 +69,7 @@ class CommandLineToolFetcher {
 	func fetch(album ID: String) {
 		run(try API?.fetch(album: ID, callback: callback { Renderer.render(album: $0) }))
 		if hasError { return }
+		Renderer.write(message: "")
 		run(try API?.fetch(tracksInAlbum: ID, callback: callback { Renderer.render(tracks: $0) }))
 	}
 
@@ -83,6 +84,7 @@ class CommandLineToolFetcher {
 	func fetch(playlist ID: String) {
 		run(try API?.fetch(playlist: ID, callback: callback { Renderer.render(playlist: $0) }))
 		if hasError { return }
+		Renderer.write(message: "")
 		run(try API?.fetch(tracksInPlaylist: ID, callback: callback { Renderer.render(tracks: $0) }))
 	}
 
