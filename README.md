@@ -36,28 +36,28 @@ Then, set the client ID and secret by calling
 
 The tool supports following copmmands
 
-* `set_client_id (ID) (SECRET)` - Set client ID and secret.
-* `get_client_id (ID) (SECRET)` - Get client ID and secret.
-* `featured_playlists` - Fetch features playlists.
-* `featured_playlists_categories` - Fetch features playlist categories.
-* `featured_playlists_category (ID)` - Fetch playlists in a category.
-* `new_hits_playlists` - Fetch new hits playlists.
-* `charts` - Fetch charts.
-* `track (TRACK_ID)` - Fetch a track.
-* `album (ALBUM_ID)` - Fetch an album.
-* `artist (ARTIST_ID)` - Fetch an artist.
-* `artist_albums (ARTIST_ID)` - Fetch albums of an artist.
-* `playlist (PLAYLSIT_ID)` - Fetch a playlist.
-* `mood_stations` - Fetch mood stations.
-* `mood_station (STATION_ID)` - Fetch a mood station.
-* `genre_stations` - Fetch genre stations.
-* `grene_station (STATION_ID)` - Fetch a genre station.
-* `new_release_categories`- Fetch new released album categories.
-* `new_release_category (ID)` - Fetch albums in a new released album category
-* `search_track (KEYWORD)` - Search for tracks.
-* `search_album (KEYWORD)` - Search for albums.
-* `search_artist (KEYWORD)` - Search for artists.
-* `search_playlist (KEYWORD)` - Search for playlists.
+- `set_client_id (ID) (SECRET)` - Set client ID and secret.
+- `get_client_id (ID) (SECRET)` - Get client ID and secret.
+- `featured_playlists` - Fetch features playlists.
+- `featured_playlists_categories` - Fetch features playlist categories.
+- `featured_playlists_category (ID)` - Fetch playlists in a category.
+- `new_hits_playlists` - Fetch new hits playlists.
+- `charts` - Fetch charts.
+- `track (TRACK_ID)` - Fetch a track.
+- `album (ALBUM_ID)` - Fetch an album.
+- `artist (ARTIST_ID)` - Fetch an artist.
+- `artist_albums (ARTIST_ID)` - Fetch albums of an artist.
+- `playlist (PLAYLSIT_ID)` - Fetch a playlist.
+- `mood_stations` - Fetch mood stations.
+- `mood_station (STATION_ID)` - Fetch a mood station.
+- `genre_stations` - Fetch genre stations.
+- `grene_station (STATION_ID)` - Fetch a genre station.
+- `new_release_categories`- Fetch new released album categories.
+- `new_release_category (ID)` - Fetch albums in a new released album category
+- `search_track (KEYWORD)` - Search for tracks.
+- `search_album (KEYWORD)` - Search for albums.
+- `search_artist (KEYWORD)` - Search for artists.
+- `search_playlist (KEYWORD)` - Search for playlists.
 
 ## License
 
