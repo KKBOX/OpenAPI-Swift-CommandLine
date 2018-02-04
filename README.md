@@ -15,10 +15,16 @@ The project turns [KKBOX Open API Swift SDK](https://github.com/KKBOX/OpenAPI-Sw
 The command line tool currently runs on macOS only. You can run Swift code on Linux, but KKBOX's Swift SDK uses NSURLSession, which is not ported to Linux yet, for fetching data on the Internet.
 
 ## Installation
+### Using Mint
+
+You can run the tool by using [Mint](https://github.com/yonaskolb/mint)
+
+    $ mint run zonble/OpenAPI-Swift-CommandLine kkbox
+### From Source Code
 
 What you need to do is to checkout the project, change to the folder where the project is located at, and input
 
-    make
+    $ make
 
 The command "kkbox" will be installed to /usr/local/bin
 
