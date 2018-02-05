@@ -208,6 +208,8 @@ Title   \(category.title)
 
 	static func renderHelp() {
 		let help = """
+KKBOX Open API Swift Command Line Tool
+
 Usage:
 
     $ kkbox COMMAND

@@ -217,7 +217,7 @@ public final class OpenAPICommandLineTool {
 				break
 			#endif
 		case .version:
-			Renderer.write(message: "kkbox 0.0.1")
+			Renderer.write(message: "KKBOX Open API Swift Command Line Tool 0.0.2")
 		case .help:
 			Renderer.renderHelp()
 		}
