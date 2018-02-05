@@ -218,6 +218,7 @@ Commands:
 
     set_client_id (ID) (SECRET)         Set client ID and secret.
     get_client_id (ID) (SECRET)         Get client ID and secret.
+    del_client_id                       Delete saved client ID and secret.
     featured_playlists                  Fetch features playlists.
     featured_playlists_categories       Fetch features playlist categories.
     featured_playlists_category (ID)    Fetch playlists in a category.

@@ -1,11 +1,16 @@
 import Foundation
 
+#if os(macOS)
+import Cocoa
+#endif
+
 let clientIDKey = "clientID"
 let clientSecretKey = "clientSecret"
 
 private enum Commands: String {
 	case setClientID = "set_client_id"
 	case getClientID = "get_client_id"
+	case deleteClientID = "del_client_id"
 	case featuredPlaylists = "featured_playlists"
 	case featuredPlaylistCategories = "featured_playlists_categories"
 	case featuredPlaylistCategory = "featured_playlists_category"
@@ -26,13 +31,14 @@ private enum Commands: String {
 	case searchAlbum = "search_album"
 	case searchArtist = "search_artist"
 	case searchPlaylist = "search_playlist"
+	case developerSite = "developer_site"
 	case version = "version"
 	case help = "help"
 
 	/// If the command requries an access token.
 	var requireAccessToken: Bool {
 		switch self {
-		case .setClientID, .getClientID, .version, .help:
+		case .setClientID, .getClientID, .deleteClientID, .developerSite, .version, .help:
 			return false
 		default:
 			return true
@@ -51,8 +57,10 @@ enum OpenAPICommandLineError: Error {
 	case noPlaylistID
 	case noStationID
 	case noKeyword
+}
 
-	var localizedDescription: String {
+extension OpenAPICommandLineError: LocalizedError {
+	var errorDescription: String? {
 		switch self {
 		case .noClientID:
 			return "You did not input your client ID yet. Please input your client ID and secret by: kkbox set_client_id <client_id> <secret>"
@@ -166,14 +174,6 @@ public final class OpenAPICommandLineTool {
 			try requestParameter(for: {
 				fetcher.fetch(newReleaseCategory: $0)
 			}, error: .noCategoryID)
-		case .setClientID:
-			if self.arguments.count < 4 {
-				throw OpenAPICommandLineError.clientIDFormatInvalid
-			}
-			let clientID = self.arguments[2]
-			let clientSecret = self.arguments[3]
-			UserDefaults.standard.set(clientID, forKey: clientIDKey)
-			UserDefaults.standard.set(clientSecret, forKey: clientSecretKey)
 		case .searchTrack:
 			try requestParameter(for: {
 				fetcher.searchTrack(keyword: $0)
@@ -190,6 +190,15 @@ public final class OpenAPICommandLineTool {
 			try requestParameter(for: {
 				fetcher.searchPlaylist(keyword: $0)
 			}, error: .noKeyword)
+		case .setClientID:
+			if self.arguments.count < 4 {
+				throw OpenAPICommandLineError.clientIDFormatInvalid
+			}
+			let clientID = self.arguments[2]
+			let clientSecret = self.arguments[3]
+			UserDefaults.standard.set(clientID, forKey: clientIDKey)
+			UserDefaults.standard.set(clientSecret, forKey: clientSecretKey)
+			UserDefaults.standard.synchronize()
 		case .getClientID:
 			guard let clientID = UserDefaults.standard.string(forKey: clientIDKey),
 			      let clientSecret = UserDefaults.standard.string(forKey: clientSecretKey) else {
@@ -197,6 +206,16 @@ public final class OpenAPICommandLineTool {
 			}
 			Renderer.write(message: "Client ID: \(clientID)")
 			Renderer.write(message: "Client Secret: \(clientSecret)")
+		case .deleteClientID:
+			UserDefaults.standard.removeObject(forKey: clientIDKey)
+			UserDefaults.standard.removeObject(forKey: clientSecretKey)
+			UserDefaults.standard.synchronize()
+		case .developerSite:
+			#if os(macOS)
+				NSWorkspace.shared.open(URL(string: "https://developer.kkbox.com")!)
+				#else
+				break
+			#endif
 		case .version:
 			Renderer.write(message: "kkbox 0.0.1")
 		case .help:
