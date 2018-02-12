@@ -1,7 +1,7 @@
 BIN="$(swift build -c release --show-bin-path)/kkbox"
 # swift package update
 # swift package clean
-swift build -c release
+swift build -c release -Xswiftc -static-stdlib
 rm -rf tmp
 mkdir -p tmp/usr/local/bin
 cp $BIN tmp/usr/local/bin/.
