@@ -1,10 +1,10 @@
 # KKBOX Open API Swift Command Line Tool
 
-
+[![Actions Status](https://github.com/KKBOX/OpenAPI-Swift-CommandLine/workflows/Build/badge.svg)](https://github.com/KKBOX/OpenAPI-Swift-CommandLine/actions)&nbsp;
+[![Build Status](https://travis-ci.org/KKBOX/OpenAPI-Swift-CommandLine.svg?branch=master)](https://travis-ci.org/KKBOX/OpenAPI-Swift-CommandLine)&nbsp;
 [![SPM](https://img.shields.io/badge/spm-compatible-brightgreen.svg?style=flat)](https://swift.org/package-manager)&nbsp;
 [![License Apache](https://img.shields.io/badge/license-Apache-green.svg?style=flat)](https://raw.githubusercontent.com/KKBOX/OpenAPI-Swift/master/LICENSE)&nbsp;
 [![Git Version](https://img.shields.io/github/release/KKBOX/OpenAPI-Swift-CommandLine.svg)](https://github.com/KKBOX/OpenAPI-Swift-CommandLine/releases)&nbsp;
-[![Build Status](https://travis-ci.org/KKBOX/OpenAPI-Swift-CommandLine.svg?branch=master)](https://travis-ci.org/KKBOX/OpenAPI-Swift-CommandLine)
 
 Access KKBOX's Open API using a command line tool with the Swift SDK.
 
